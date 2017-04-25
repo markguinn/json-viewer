@@ -3,7 +3,7 @@ var svgGear = require('./svg-gear');
 var svgRaw = require('./svg-raw');
 var svgUnfold = require('./svg-unfold');
 
-function renderExtras(pre, options, highlighter) {
+function renderExtras(pre, options, highlighter, container = document.body) {
   var extras = document.createElement("div");
   extras.className = "extras";
 
@@ -68,7 +68,7 @@ function renderExtras(pre, options, highlighter) {
   pre.setAttribute('data-folded', options.addons.alwaysFold || options.addons.awaysFold)
   extras.appendChild(unfoldLink);
 
-  document.body.appendChild(extras);
+  container.appendChild(extras);
 }
 
 module.exports = renderExtras;

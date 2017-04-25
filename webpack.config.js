@@ -15,7 +15,9 @@ var entries = {
   options: ["./extension/src/options.js"],
   backend: ["./extension/src/backend.js"],
   omnibox: ["./extension/src/omnibox.js"],
-  "omnibox-page": ["./extension/src/omnibox-page.js"]
+  "omnibox-page": ["./extension/src/omnibox-page.js"],
+  "redfin-api-panel": ["./extension/src/redfin-api-panel.js"],
+  "redfin-api-main": ["./extension/src/redfin-api-main.js"],
 };
 
 function findThemes(darkness) {

@@ -19,6 +19,7 @@
   ],
   "omnibox": { "keyword" : "json-viewer" },
   "options_page": "pages/options.html",
+  "devtools_page": "pages/redfin-api-main.html",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

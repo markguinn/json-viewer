@@ -46,24 +46,29 @@ function prependHeader(options, outsideViewer, jsonText) {
   return jsonText;
 }
 
-function highlightContent(pre, outsideViewer) {
+function highlightContent(pre, outsideViewer, container = document.body) {
   getOptions().then(function(options) {
     if (oversizedJSON(pre, options)) {
       return pre.hidden = false;
     }
 
-    return contentExtractor(pre, options).
-      then(function(value) {
-        return loadRequiredCss(options).then(function() { return value; });
-      }).
-      then(function(value) {
-
+    return contentExtractor(pre, options)
+      .then(function(value) {
+        if (container.__cssLoaded) {
+          return value;
+        } else {
+          return loadRequiredCss(options).then(function() {
+            container.__cssLoaded = true;
+            return value;
+          });
+        }
+      })
+      .then(function(value) {
         var formatted = prependHeader(options, outsideViewer, value.jsonText);
-        var highlighter = new Highlighter(formatted, options);
+        var highlighter = new Highlighter(formatted, options, container);
 
         if (options.addons.autoHighlight) {
           highlighter.highlight();
-
         } else {
           highlighter.highlight();
           highlighter.hide();
@@ -84,8 +89,7 @@ function highlightContent(pre, outsideViewer) {
         }
 
         exposeJson(value.jsonExtracted, outsideViewer);
-        renderExtras(pre, options, highlighter);
-
+        renderExtras(pre, options, highlighter, container);
       });
 
   }).catch(function(e) {

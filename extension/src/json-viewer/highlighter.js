@@ -13,9 +13,10 @@ var defaults = require('./options/defaults');
 var URL_PATTERN = require('./url-pattern');
 var F_LETTER = 70;
 
-function Highlighter(jsonText, options) {
+function Highlighter(jsonText, options, container = document.body) {
   this.options = options || {};
   this.text = jsonText;
+  this.container = container;
   this.defaultSearch = false;
   this.theme = this.options.theme || "default";
   this.theme = this.theme.replace(/_/, ' ');
@@ -23,7 +24,7 @@ function Highlighter(jsonText, options) {
 
 Highlighter.prototype = {
   highlight: function() {
-    this.editor = CodeMirror(document.body, this.getEditorOptions());
+    this.editor = CodeMirror(this.container, this.getEditorOptions());
     if (!this.alwaysRenderAllContent()) this.preventDefaultSearch();
     if (this.isReadOny()) this.getDOMEditor().className += ' read-only';
 
