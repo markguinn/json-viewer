@@ -63,11 +63,12 @@ function checkIfJson(sucessCallback, element) {
 
   if (pre !== null && pre !== undefined) {
     var txt = pre.textContent;
+
     if (txt.indexOf('{}&&{') === 0) {
       txt = txt.substr(4);
       pre.textContent = txt;
     }
-      console.log('txt=', txt);
+
     if (isJSON(txt) || isJSONP(txt)) {
       sucessCallback(pre);
     }
