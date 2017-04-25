@@ -61,11 +61,16 @@ function isJSONP(jsonStr) {
 function checkIfJson(sucessCallback, element) {
   var pre = element || getPreWithSource();
 
-  if (pre !== null &&
-    pre !== undefined &&
-    (isJSON(pre.textContent) || isJSONP(pre.textContent))) {
-
-    sucessCallback(pre);
+  if (pre !== null && pre !== undefined) {
+    var txt = pre.textContent;
+    if (txt.indexOf('{}&&{') === 0) {
+      txt = txt.substr(4);
+      pre.textContent = txt;
+    }
+      console.log('txt=', txt);
+    if (isJSON(txt) || isJSONP(txt)) {
+      sucessCallback(pre);
+    }
   }
 }
 
