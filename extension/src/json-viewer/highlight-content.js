@@ -46,8 +46,10 @@ function prependHeader(options, outsideViewer, jsonText) {
   return jsonText;
 }
 
-function highlightContent(pre, outsideViewer, container = document.body) {
+function highlightContent(pre, outsideViewer, container = document.body, forceOptions = {}) {
   getOptions().then(function(options) {
+    options = Object.assign(options, forceOptions);
+
     if (oversizedJSON(pre, options)) {
       return pre.hidden = false;
     }

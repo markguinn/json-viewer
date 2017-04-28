@@ -1,6 +1,10 @@
+* {
+  box-sizing: border-box;
+}
+
 #request-list {
   position: absolute;
-  top: 0;
+  top: 30px;
   left: 0;
   bottom: 0;
   width: 30%;
@@ -11,36 +15,71 @@
 
   li {
     display: block;
-    overflow-x: auto;
-    overflow-y: hidden;
+    //overflow-x: visible;
+    overflow: hidden;
     white-space: nowrap;
-    height: 30px;
-    line-height: 30px;
-    border-bottom: 1px solid black;
-    box-sizing: border-box;
-    padding: 0 10px;
+    height: 36px;
+    padding: 0 5px;
+
+    .main {
+      display: block;
+      white-space: nowrap;
+      line-height: 24px;
+      .method {
+        font-weight: bold;
+      }
+    }
+    .host {
+      line-height: 8px;
+      display: block;
+      font-size: 8px;
+    }
 
     &:nth-child(even) {
       background: white;
     }
+
+    &.selected {
+      background: #ccc;
+    }
+
+    &.heading {
+      background: #888;
+      color: #fff;
+      border-bottom: 1px solid #888;
+      font-size: 8px;
+      height: 10px;
+      line-height: 10px;
+    }
   }
 }
-//#request-list.empty::after {
-//  content: "Redfin API requests will display here as they are received...";
-//  text-align: center;
-//}
+
+#button-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 30px;
+  border-bottom: 1px solid #888;
+  background: #ddd;
+  padding: 3px;
+
+  button, input {
+    height: 24px;
+    margin-right: 3px;
+  }
+}
 
 #request-detail {
   position: absolute !important;
-  top: 0;
+  top: 30px;
   right: 0;
   bottom: 0;
   width: 70% !important;
-  border-left: 1px solid black;
+  border-left: 1px solid #888;
   display: block;
+  overflow: auto;
   > pre {
     padding: 20px;
   }
-  overflow: auto;
-  box-sizing: border-box;
 }
