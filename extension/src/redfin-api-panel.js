@@ -3,7 +3,7 @@ const moment = require('moment');
 const checkIfJson = require('./json-viewer/check-if-json');
 const highlightContent = require('./json-viewer/highlight-content');
 
-let list, detail, filter, clearBtn, startBtn, stopBtn;
+let list, detail, filter, clearBtn, startBtn, stopBtn, dragHandle, sidebarWidth;
 
 let recording = true,
     lastReq = 0,
@@ -38,7 +38,7 @@ chrome.devtools.network.onRequestFinished.addListener(function(request) {
 
                     let h = document.createElement('li');
                     h.className = 'heading';
-                    h.innerText = 'SERVER @ ' + moment().format('LTS');
+                    h.innerText = 'SERVER: ' + moment().format('LTS') + ` - ${request.request.url.replace(basePath, '')}`;
                     list.appendChild(h);
 
                     Object.keys(json['ReactServerAgent.cache']['dataCache'])
@@ -87,6 +87,7 @@ window.addEventListener('load', function() {
     startBtn = document.getElementById('start-btn');
     stopBtn = document.getElementById('stop-btn');
     filter = document.getElementById('filter');
+    dragHandle = document.getElementById('drag-handle');
 
     startBtn.style.display = 'none';
 
@@ -116,6 +117,37 @@ window.addEventListener('load', function() {
             items[i].style.display = (searchText === '' || text.indexOf(searchText) > -1) ? 'block' :'none';
         }
     });
+
+    let dragging = false;
+    document.body.addEventListener('mousedown', function(e) {
+        if (e.target === dragHandle) {
+            dragging = true;
+            e.preventDefault();
+        }
+    });
+    document.body.addEventListener('mouseup', function(e) {
+        if (dragging) {
+            dragging = false;
+            e.preventDefault();
+        }
+    });
+    document.body.addEventListener('mousemove', function(e) {
+        if (e.pageX > 0 && dragging) {
+            sidebarWidth = e.pageX + 'px';
+            list.style.width = sidebarWidth;
+            detail.style.left = sidebarWidth;
+            dragHandle.style.left = sidebarWidth;
+            e.preventDefault();
+        }
+    });
+    // dragHandle.addEventListener('drag', function(e) {
+    //     if (e.pageX > 0) {
+    //         sidebarWidth = e.pageX + 'px';
+    //         list.style.width = sidebarWidth;
+    //         detail.style.left = sidebarWidth;
+    //         dragHandle.style.left = sidebarWidth;
+    //     }
+    // });
 
     list.addEventListener('click', function(e) {
         let li = e.target;

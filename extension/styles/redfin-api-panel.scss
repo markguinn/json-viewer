@@ -2,13 +2,16 @@
   box-sizing: border-box;
 }
 
+$sidebar-width: 30%;
+$topbar-height: 30px;
+
 #request-list {
   position: absolute;
-  top: 30px;
+  top: $topbar-height;
   left: 0;
   bottom: 0;
-  width: 30%;
-  background: #eee;
+  width: $sidebar-width;
+  background: white;
   margin: 0;
   padding: 0;
   overflow-y: auto;
@@ -24,29 +27,34 @@
     .main {
       display: block;
       white-space: nowrap;
-      line-height: 24px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 22px;
       .method {
         font-weight: bold;
       }
     }
     .host {
-      line-height: 8px;
+      line-height: 6px;
       display: block;
+      white-space: nowrap;
       font-size: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &:nth-child(even) {
-      background: white;
+      background: #f4f4f4;
     }
 
     &.selected {
-      background: #ccc;
+      background: #727272;
+      color: white;
     }
 
     &.heading {
-      background: #888;
+      background: #c82021;
       color: #fff;
-      border-bottom: 1px solid #888;
       font-size: 8px;
       height: 10px;
       line-height: 10px;
@@ -59,27 +67,39 @@
   left: 0;
   top: 0;
   right: 0;
-  height: 30px;
+  height: $topbar-height;
   border-bottom: 1px solid #888;
   background: #ddd;
   padding: 3px;
 
   button, input {
-    height: 24px;
+    height: $topbar-height - 6px;
     margin-right: 3px;
   }
 }
 
 #request-detail {
-  position: absolute !important;
-  top: 30px;
+  position: absolute;
+  top: $topbar-height;
   right: 0;
   bottom: 0;
-  width: 70% !important;
+  left: $sidebar-width;
   border-left: 1px solid #888;
   display: block;
   overflow: auto;
   > pre {
     padding: 20px;
   }
+}
+
+#drag-handle {
+  display: block;
+  position: absolute;
+  top: $topbar-height;
+  bottom: 0;
+  width: 4px;
+  left: $sidebar-width;
+  margin-left: -2px;
+  background: transparent;
+  cursor: col-resize;
 }
