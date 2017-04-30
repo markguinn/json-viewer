@@ -9,36 +9,73 @@ let recording = true,
     lastReq = 0,
     requests = [];
 
+function addRequestRow(data) {
+    let li = document.createElement('li'),
+        parts = data.url.split('/'),
+        host = parts[2],
+        path = parts.slice(3).join('/');
+
+    li.innerHTML = `<span class="main"><span class="method">${data.request.method}</span> ${path}</span><span class="host">${host}</span>`;
+    li.setAttribute('data-request', requests.length);
+    list.appendChild(li);
+
+    requests.push(data);
+}
+
 chrome.devtools.network.onRequestFinished.addListener(function(request) {
     request.getContent(function(content, encoding) {
-        if (recording && content.indexOf('{}&&{') === 0) {
-            let now = moment();
-            if (now.valueOf() - lastReq > 5000) {
-                let h = document.createElement('li');
-                h.className = 'heading';
-                h.innerText = now.format('LTS');
-                list.appendChild(h);
-            }
-            lastReq = now.valueOf();
+        if (recording) {
+            const
+                STRING1 = 'root.__reactServerState.InitialContext = ',
+                STRING2 = 'root.__reactServerState.Config';
 
-            let li = document.createElement('li'),
-                data = {
+            let idx = content.indexOf(STRING1);
+            if (idx > -1) {
+                try {
+                    let idx2 = content.indexOf(STRING2),
+                        json = JSON.parse(content.substring(idx + STRING1.length, idx2 - 2)),
+                        basePath = request.request.url.split('/').slice(0, 3).join('/');
+
+                    let h = document.createElement('li');
+                    h.className = 'heading';
+                    h.innerText = 'SERVER @ ' + moment().format('LTS');
+                    list.appendChild(h);
+
+                    Object.keys(json['ReactServerAgent.cache']['dataCache'])
+                        .map(k => json['ReactServerAgent.cache']['dataCache'][k])
+                        .filter(r => r.loaded && r.res && r.res.type === 'application/json')
+                        .map(req => {
+                            return {
+                                url: basePath + req.requestData.urlPath,
+                                request: req.requestData,
+                                response: req.res,
+                                content: req.res.text,
+                                server: true,
+                            }
+                        })
+                        .forEach(addRequestRow);
+                } catch(e) {
+                    console.error('JSON parse error', e);
+                }
+            } else if (content.indexOf('{}&&{') === 0) {
+                let now = moment();
+                if (now.valueOf() - lastReq > 5000) {
+                    let h = document.createElement('li');
+                    h.className = 'heading';
+                    h.innerText = now.format('LTS');
+                    list.appendChild(h);
+                }
+
+                lastReq = now.valueOf();
+
+                addRequestRow({
                     url: request.request.url,
                     request: request.request,
                     response: request.response,
                     content,
                     encoding,
-                };
-
-            let parts = request.request.url.split('/'),
-                host = parts[2],
-                path = parts.slice(3).join('/');
-
-            li.innerHTML = `<span class="main"><span class="method">${request.request.method}</span> ${path}</span><span class="host">${host}</span>`;
-            li.setAttribute('data-request', requests.length);
-            list.appendChild(li);
-
-            requests.push(data);
+                });
+            }
         }
     });
 });
