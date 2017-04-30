@@ -22,6 +22,12 @@ function addRequestRow(data) {
     requests.push(data);
 }
 
+function enforceSidebarWidth() {
+    list.style.width = sidebarWidth;
+    detail.style.left = sidebarWidth;
+    dragHandle.style.left = sidebarWidth;
+}
+
 chrome.devtools.network.onRequestFinished.addListener(function(request) {
     request.getContent(function(content, encoding) {
         if (recording) {
@@ -91,6 +97,9 @@ window.addEventListener('load', function() {
 
     startBtn.style.display = 'none';
 
+    sidebarWidth = localStorage.getItem('sidebar');
+    if (sidebarWidth) enforceSidebarWidth();
+
     clearBtn.addEventListener('click', function() {
         requests = [];
         list.innerHTML = '';
@@ -134,20 +143,11 @@ window.addEventListener('load', function() {
     document.body.addEventListener('mousemove', function(e) {
         if (e.pageX > 0 && dragging) {
             sidebarWidth = e.pageX + 'px';
-            list.style.width = sidebarWidth;
-            detail.style.left = sidebarWidth;
-            dragHandle.style.left = sidebarWidth;
+            enforceSidebarWidth();
+            localStorage.setItem('sidebar', sidebarWidth);
             e.preventDefault();
         }
     });
-    // dragHandle.addEventListener('drag', function(e) {
-    //     if (e.pageX > 0) {
-    //         sidebarWidth = e.pageX + 'px';
-    //         list.style.width = sidebarWidth;
-    //         detail.style.left = sidebarWidth;
-    //         dragHandle.style.left = sidebarWidth;
-    //     }
-    // });
 
     list.addEventListener('click', function(e) {
         let li = e.target;
